@@ -1,0 +1,17 @@
+{
+  "name": "Dashboard News AI Devcontainer",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "dsznajder.es7-react-js-snippets",
+    "antfu.tailwindcss-intellisense"
+  ],
+  "forwardPorts": [3000, 5173],
+  "remoteUser": "node"
+}
