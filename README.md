@@ -6,7 +6,6 @@ Un tableau de bord personnalisable d’actualités avec résumés générés par
 - Frontend : React.js + Tailwind
 - Backend : NestJS + PostgreSQL
 - IA : OpenAI API
-- Monétisation : Google AdSense
 
 ## Installation
 1. Clonez le repo
