@@ -1,25 +1,32 @@
-import { Link, Outlet } from "react-router-dom";
+// frontend/src/components/Layout.jsx
+import { Outlet, Link } from "react-router-dom";
 
 export default function Layout() {
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* HEADER */}
-      <header className="bg-gray-900 text-white p-4">
-        <nav className="flex gap-4">
-          <Link to="/">Accueil</Link>
-          <Link to="/about">À propos</Link>
-          <Link to="/news">Actualités</Link>
+    <div>
+      <header className="bg-blue-500 text-white p-4">
+        <nav className="container mx-auto flex justify-between">
+          <h1 className="font-bold">Dashboard News AI</h1>
+          <div className="space-x-4">
+            <Link to="/" className="hover:underline">
+              Home
+            </Link>
+            <Link to="/about" className="hover:underline">
+              About
+            </Link>
+            <Link to="/news" className="hover:underline">
+              News
+            </Link>
+          </div>
         </nav>
       </header>
 
-      {/* CONTENU CENTRAL */}
-      <main className="flex-grow p-4">
-        <Outlet /> {/* Ici s’affichent les pages */}
+      <main className="container mx-auto p-4">
+        <Outlet /> {/* Affiche le contenu de la page actuelle */}
       </main>
 
-      {/* FOOTER */}
-      <footer className="bg-gray-200 text-center p-4">
-        <p>© {new Date().getFullYear()} Dashboard News AI</p>
+      <footer className="bg-gray-200 text-center p-4 mt-4">
+        &copy; 2025 Dashboard News AI
       </footer>
     </div>
   );
