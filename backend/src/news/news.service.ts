@@ -15,7 +15,8 @@ export class NewsService {
           language,
         },
       });
-      return response.data.results;
+
+      return response.data.results || []; // retourne uniquement les articles disponibles
     } catch (error) {
       throw new HttpException('Erreur lors de la récupération des news', 500);
     }

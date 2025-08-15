@@ -8,6 +8,10 @@ export default function News() {
     language: "fr",
   });
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const articlesPerPage = 5;
+
+  // Récupération des articles
   const fetchNews = () => {
     const query = new URLSearchParams(filters).toString();
     fetch(`http://localhost:3000/news?${query}`)
@@ -26,8 +30,15 @@ export default function News() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setCurrentPage(1); // reset page
     fetchNews();
   };
+
+  // Pagination côté frontend
+  const indexOfLast = currentPage * articlesPerPage;
+  const indexOfFirst = indexOfLast - articlesPerPage;
+  const currentArticles = articles.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(articles.length / articlesPerPage);
 
   return (
     <div className="p-4">
@@ -72,7 +83,7 @@ export default function News() {
 
       {/* Liste des articles */}
       <div className="space-y-4">
-        {articles.map((article, index) => (
+        {currentArticles.map((article, index) => (
           <div key={index} className="p-4 border rounded">
             <h2 className="font-semibold">{article.title}</h2>
             <p>{article.description}</p>
@@ -88,6 +99,29 @@ export default function News() {
             )}
           </div>
         ))}
+      </div>
+
+      {/* Pagination */}
+      <div className="mt-6 flex gap-2">
+        <button
+          disabled={currentPage <= 1}
+          onClick={() => setCurrentPage((prev) => prev - 1)}
+          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+        >
+          Précédent
+        </button>
+
+        <span>
+          Page {currentPage} / {totalPages}
+        </span>
+
+        <button
+          disabled={currentPage >= totalPages}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+        >
+          Suivant
+        </button>
       </div>
     </div>
   );
