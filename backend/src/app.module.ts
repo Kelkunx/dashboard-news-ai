@@ -1,17 +1,8 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ArticlesModule } from './articles/articles.module';
-import { Article } from './articles/article.entity';
+import { ConfigModule } from '@nestjs/config';
+import { NewsModule } from './news/news.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot({
-      type: 'sqlite', // Type de DB
-      database: 'db.sqlite', // Fichier SQLite
-      entities: [Article], // Entités à gérer
-      synchronize: true, // Crée automatiquement les tables
-    }),
-    ArticlesModule,
-  ],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), NewsModule],
 })
 export class AppModule {}
