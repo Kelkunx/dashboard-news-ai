@@ -1,54 +1,71 @@
-import { useEffect, useState } from "react";
+import { useCallback } from "react";
+import { useState, useEffect } from "react";
 
 export default function News() {
   const [articles, setArticles] = useState([]);
-  const [filters, setFilters] = useState({
+
+  // État "live" du formulaire
+  const [formFilters, setFormFilters] = useState({
     category: "technology",
     country: "fr",
     language: "fr",
+    q: "",
   });
+
+  // État validé qui déclenche la requête
+  const [filters, setFilters] = useState(formFilters);
 
   const [currentPage, setCurrentPage] = useState(1);
   const articlesPerPage = 5;
 
-  // Récupération des articles
-  const fetchNews = () => {
+  // Fonction pour récupérer les news
+  const fetchNews = useCallback(() => {
     const query = new URLSearchParams(filters).toString();
     fetch(`http://localhost:3000/news?${query}`)
       .then((res) => res.json())
       .then((data) => setArticles(data))
       .catch((err) => console.error("Erreur récupération news", err));
-  };
+  }, [filters]);
 
+  // Quand filters change, on recharge les news
   useEffect(() => {
     fetchNews();
-  }, []);
+  }, [fetchNews, filters]);
 
   const handleChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
+    setFormFilters({ ...formFilters, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setCurrentPage(1); // reset page
-    fetchNews();
+    setCurrentPage(1);
+    setFilters(formFilters); // applique les filtres validés
   };
 
-  // Pagination côté frontend
+  // Pagination
   const indexOfLast = currentPage * articlesPerPage;
   const indexOfFirst = indexOfLast - articlesPerPage;
   const currentArticles = articles.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(articles.length / articlesPerPage);
+
+  // Résumé automatique
+  const summarize = (text) => {
+    if (!text) return "";
+    const sentences = text.split(".");
+    return (
+      sentences.slice(0, 2).join(".") + (sentences.length > 2 ? "..." : "")
+    );
+  };
 
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Dernières news</h1>
 
       {/* Formulaire de filtres */}
-      <form onSubmit={handleSubmit} className="mb-6 flex gap-4">
+      <form onSubmit={handleSubmit} className="mb-6 flex gap-4 flex-wrap">
         <select
           name="category"
-          value={filters.category}
+          value={formFilters.category}
           onChange={handleChange}
         >
           <option value="technology">Technologie</option>
@@ -57,7 +74,11 @@ export default function News() {
           <option value="health">Santé</option>
         </select>
 
-        <select name="country" value={filters.country} onChange={handleChange}>
+        <select
+          name="country"
+          value={formFilters.country}
+          onChange={handleChange}
+        >
           <option value="fr">France</option>
           <option value="us">USA</option>
           <option value="gb">Royaume-Uni</option>
@@ -66,12 +87,21 @@ export default function News() {
 
         <select
           name="language"
-          value={filters.language}
+          value={formFilters.language}
           onChange={handleChange}
         >
           <option value="fr">Français</option>
           <option value="en">Anglais</option>
         </select>
+
+        <input
+          type="text"
+          name="q"
+          placeholder="Rechercher un mot-clé..."
+          value={formFilters.q}
+          onChange={handleChange}
+          className="border px-2 py-1 rounded"
+        />
 
         <button
           type="submit"
@@ -87,6 +117,10 @@ export default function News() {
           <div key={index} className="p-4 border rounded">
             <h2 className="font-semibold">{article.title}</h2>
             <p>{article.description}</p>
+            <p className="text-sm text-gray-600 mt-2">
+              <strong>Résumé :</strong>{" "}
+              {summarize(article.description || article.content)}
+            </p>
             {article.link && (
               <a
                 href={article.link}
