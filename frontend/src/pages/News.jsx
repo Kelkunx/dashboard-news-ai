@@ -1,5 +1,4 @@
-import { useCallback } from "react";
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function News() {
   const [articles, setArticles] = useState([]);
@@ -18,19 +17,58 @@ export default function News() {
   const [currentPage, setCurrentPage] = useState(1);
   const articlesPerPage = 5;
 
+  // Résumés IA pour chaque article
+  const [summaries, setSummaries] = useState({}); // clé = article.url ou title
+
+  const [loading, setLoading] = useState(false);
+
   // Fonction pour récupérer les news
-  const fetchNews = useCallback(() => {
+  const fetchNews = useCallback(async () => {
+    setLoading(true); // début du chargement
     const query = new URLSearchParams(filters).toString();
-    fetch(`http://localhost:3000/news?${query}`)
-      .then((res) => res.json())
-      .then((data) => setArticles(data))
-      .catch((err) => console.error("Erreur récupération news", err));
+    try {
+      const res = await fetch(`http://localhost:3000/news?${query}`);
+      const data = await res.json();
+      setArticles(data);
+    } catch (err) {
+      console.error("Erreur récupération news", err);
+    } finally {
+      setLoading(false); // fin du chargement
+    }
   }, [filters]);
 
   // Quand filters change, on recharge les news
   useEffect(() => {
     fetchNews();
-  }, [fetchNews, filters]);
+  }, [fetchNews]);
+
+  // Fonction pour récupérer le résumé IA d'un article
+  const fetchSummary = async (text, key) => {
+    try {
+      const res = await fetch("http://localhost:3000/summary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      const data = await res.json();
+      setSummaries((prev) => ({ ...prev, [key]: data.summary }));
+    } catch (err) {
+      console.error("Erreur résumé IA", err);
+      setSummaries((prev) => ({ ...prev, [key]: "Résumé indisponible" }));
+    }
+  };
+
+  // Récupération des résumés quand les articles changent
+  useEffect(() => {
+    articles.forEach((article) => {
+      const key = article.url || article.title;
+      if (!summaries[key]) {
+        const text = `${article.title || ""}. ${article.description || ""}. ${article.content || ""}`;
+
+        if (text) fetchSummary(text, key);
+      }
+    });
+  }, [articles]);
 
   const handleChange = (e) => {
     setFormFilters({ ...formFilters, [e.target.name]: e.target.value });
@@ -47,15 +85,6 @@ export default function News() {
   const indexOfFirst = indexOfLast - articlesPerPage;
   const currentArticles = articles.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(articles.length / articlesPerPage);
-
-  // Résumé automatique
-  const summarize = (text) => {
-    if (!text) return "";
-    const sentences = text.split(".");
-    return (
-      sentences.slice(0, 2).join(".") + (sentences.length > 2 ? "..." : "")
-    );
-  };
 
   return (
     <div className="p-4">
@@ -113,26 +142,35 @@ export default function News() {
 
       {/* Liste des articles */}
       <div className="space-y-4">
-        {currentArticles.map((article, index) => (
-          <div key={index} className="p-4 border rounded">
-            <h2 className="font-semibold">{article.title}</h2>
-            <p>{article.description}</p>
-            <p className="text-sm text-gray-600 mt-2">
-              <strong>Résumé :</strong>{" "}
-              {summarize(article.description || article.content)}
-            </p>
-            {article.link && (
-              <a
-                href={article.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 underline"
-              >
-                Lire l'article
-              </a>
-            )}
+        {loading ? (
+          <div className="flex justify-center items-center py-10">
+            <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
           </div>
-        ))}
+        ) : (
+          currentArticles.map((article, index) => {
+            const key = article.url || article.title;
+            return (
+              <div key={index} className="p-4 border rounded">
+                <h2 className="font-semibold">{article.title}</h2>
+                <p>{article.description}</p>
+                <p className="text-sm text-gray-600 mt-2">
+                  <strong>Résumé IA :</strong>{" "}
+                  {summaries[key] || "Chargement..."}
+                </p>
+                {article.link && (
+                  <a
+                    href={article.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 underline"
+                  >
+                    Lire l'article
+                  </a>
+                )}
+              </div>
+            );
+          })
+        )}
       </div>
 
       {/* Pagination */}
