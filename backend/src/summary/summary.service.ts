@@ -1,4 +1,3 @@
-// summary.service.ts
 import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
@@ -9,11 +8,6 @@ export class SummaryService {
 
   constructor(private readonly http: HttpService) {}
 
-  /**
-   * Génère un résumé IA pour un texte donné
-   * @param text Texte à résumer
-   * @returns Résumé (IA ou fallback)
-   */
   async summarize(text: string): Promise<string> {
     const textToSummarize = text?.trim();
     if (!textToSummarize) return 'Résumé indisponible';
@@ -21,38 +15,32 @@ export class SummaryService {
     try {
       const response$ = this.http.post(
         'https://api-inference.huggingface.co/models/facebook/bart-large-cnn',
-        { inputs: textToSummarize.slice(0, 1000) },
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.HF_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-        },
+        { inputs: textToSummarize },
+        { headers: { Authorization: `Bearer ${process.env.HF_API_KEY}` } },
       );
 
+      type HuggingFaceSummary = { summary_text: string };
+      type HuggingFaceResponse = HuggingFaceSummary[];
+
       const response = await firstValueFrom(response$);
-      const data = response?.data as { summary_text: string }[] | undefined;
+      const data = response?.data as HuggingFaceResponse | undefined;
 
-      if (data && data[0]?.summary_text) return data[0].summary_text;
-
-      this.logger.warn('No content from HuggingFace, using fallback');
-      return this.fallbackSummary(textToSummarize);
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.logger.error(`Erreur API HuggingFace: ${error.message}`);
+      if (data && data[0]?.summary_text?.length > 50) {
+        return data[0].summary_text;
+      } else {
+        this.logger.warn('Résumé trop court ou vide, fallback utilisé');
+        return this.fallbackSummary(textToSummarize);
+      }
+    } catch (err) {
+      this.logger.error('Erreur API HuggingFace', err);
       return this.fallbackSummary(textToSummarize);
     }
   }
 
-  /**
-   * Fallback simple : prend les 2 premières phrases
-   * @param text Texte à résumer
-   * @returns Résumé naïf
-   */
   private fallbackSummary(text: string): string {
     const sentences = text.split('.');
     return (
-      sentences.slice(0, 2).join('.') + (sentences.length > 2 ? '...' : '')
+      sentences.slice(0, 4).join('.') + (sentences.length > 4 ? '...' : '')
     );
   }
 }

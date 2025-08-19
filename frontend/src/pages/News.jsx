@@ -7,10 +7,16 @@ export default function News() {
   const [loading, setLoading] = useState(false);
   const [summaries, setSummaries] = useState({});
 
+  // Fonction pour tronquer la description
+  const truncate = (text, maxLength = 200) => {
+    if (!text) return "";
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
+
   const fetchNews = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ ...filters, page: 1, perPage: 50 }); // fetch d'avance pour Show More
+      const params = new URLSearchParams({ ...filters, page: 1, perPage: 50 }); // fetch d'avance
       const res = await fetch(`http://localhost:3000/news?${params}`);
       const data = await res.json();
       setArticles(data);
@@ -68,6 +74,17 @@ export default function News() {
 
       {/* Formulaire */}
       <form onSubmit={handleSubmit} className="mb-6 flex gap-4 flex-wrap">
+        <select
+          name="category"
+          value={filters.category}
+          onChange={handleChange}
+        >
+          <option value="technology">Technologie</option>
+          <option value="business">Business</option>
+          <option value="sports">Sports</option>
+          <option value="health">Santé</option>
+        </select>
+
         <input
           type="text"
           name="q"
@@ -76,6 +93,7 @@ export default function News() {
           onChange={handleChange}
           className="border px-2 py-1 rounded"
         />
+
         <button
           type="submit"
           className="px-4 py-2 bg-blue-500 text-white rounded"
@@ -94,7 +112,7 @@ export default function News() {
             return (
               <div key={index} className="p-4 border rounded">
                 <h2 className="font-semibold">{article.title}</h2>
-                <p>{article.description}</p>
+                <p>{truncate(article.description)}</p>
                 <p className="text-sm text-gray-600 mt-2">
                   <strong>Résumé IA :</strong>{" "}
                   {summaries[key] || "Chargement..."}
