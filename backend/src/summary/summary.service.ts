@@ -21,25 +21,25 @@ export class SummaryService {
     try {
       const response$ = this.http.post(
         'https://api-inference.huggingface.co/models/facebook/bart-large-cnn',
-        { inputs: textToSummarize },
-        { headers: { Authorization: `Bearer ${process.env.HF_API_KEY}` } },
+        { inputs: textToSummarize.slice(0, 1000) },
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.HF_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+        },
       );
 
-      type HuggingFaceSummary = { summary_text: string };
-      type HuggingFaceResponse = HuggingFaceSummary[];
-
       const response = await firstValueFrom(response$);
+      const data = response?.data as { summary_text: string }[] | undefined;
 
-      // Vérifie que l'API a renvoyé un résumé
-      const data = response?.data as HuggingFaceResponse | undefined;
-      if (data && data[0]?.summary_text) {
-        return data[0].summary_text;
-      } else {
-        this.logger.warn('No content from HuggingFace, using fallback');
-        return this.fallbackSummary(textToSummarize);
-      }
-    } catch {
-      this.logger.error('Erreur API HuggingFace');
+      if (data && data[0]?.summary_text) return data[0].summary_text;
+
+      this.logger.warn('No content from HuggingFace, using fallback');
+      return this.fallbackSummary(textToSummarize);
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.logger.error(`Erreur API HuggingFace: ${error.message}`);
       return this.fallbackSummary(textToSummarize);
     }
   }

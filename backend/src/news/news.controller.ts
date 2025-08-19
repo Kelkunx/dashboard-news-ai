@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { NewsService, NewsArticle } from './news.service';
+import { NewsService } from './news.service';
 
 @Controller('news')
 export class NewsController {
@@ -7,11 +7,13 @@ export class NewsController {
 
   @Get()
   async getNews(
-    @Query('category') category?: string,
-    @Query('country') country?: string,
-    @Query('language') language?: string,
+    @Query('category') category: string,
+    @Query('page') page: string,
+    @Query('perPage') perPage: string,
     @Query('q') q?: string,
-  ): Promise<NewsArticle[]> {
-    return await this.newsService.getLatestNews(category, country, language, q);
+  ) {
+    const p = parseInt(page, 10) || 1;
+    const pp = parseInt(perPage, 10) || 5;
+    return this.newsService.getNews(category, p, pp, q);
   }
 }
