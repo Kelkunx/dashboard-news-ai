@@ -1,32 +1,56 @@
 // frontend/src/components/Layout.jsx
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
+import { AppBar, Toolbar, Button, Typography, Container } from "@mui/material";
 
 export default function Layout() {
+  const location = useLocation();
+
+  const navItems = [
+    { label: "Home", path: "/" },
+    { label: "News", path: "/news" },
+    { label: "About", path: "/about" },
+  ];
+
   return (
-    <div>
-      <header className="bg-blue-500 text-white p-4">
-        <nav className="container mx-auto flex justify-between">
-          <h1 className="font-bold">Dashboard News AI</h1>
-          <div className="space-x-4">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>
-            <Link to="/about" className="hover:underline">
-              About
-            </Link>
-            <Link to="/news" className="hover:underline">
-              News
-            </Link>
+    <div className="flex flex-col min-h-screen">
+      {/* Header */}
+      <AppBar
+        position="sticky"
+        elevation={1}
+        className="bg-white text-gray-900"
+      >
+        <Toolbar className="flex justify-between">
+          <Typography variant="h6" className="font-bold tracking-wide">
+            My News App
+          </Typography>
+
+          <div className="space-x-2">
+            {navItems.map((item) => (
+              <Button
+                key={item.path}
+                component={Link}
+                to={item.path}
+                variant={location.pathname === item.path ? "contained" : "text"}
+                color="primary"
+                className="capitalize"
+              >
+                {item.label}
+              </Button>
+            ))}
           </div>
-        </nav>
-      </header>
+        </Toolbar>
+      </AppBar>
 
-      <main className="container mx-auto p-4">
-        <Outlet /> {/* Affiche le contenu de la page actuelle */}
-      </main>
+      {/* Contenu principal */}
+      <Container maxWidth="lg" className="flex-1 py-8">
+        <Outlet />
+      </Container>
 
-      <footer className="bg-gray-200 text-center p-4 mt-4">
-        &copy; 2025 Dashboard News AI
+      {/* Footer */}
+      <footer className="bg-gray-100 text-gray-600 text-center py-4 mt-8">
+        <Typography variant="body2">
+          © {new Date().getFullYear()} My News App — All rights reserved
+        </Typography>
       </footer>
     </div>
   );
