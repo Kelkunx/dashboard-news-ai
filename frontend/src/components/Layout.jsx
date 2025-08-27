@@ -11,6 +11,11 @@ export default function Layout() {
     { label: "About", path: "/about" },
   ];
 
+  const isActive = (path) => {
+    if (path === "/") return location.pathname === "/";
+    return location.pathname.startsWith(path);
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
@@ -20,7 +25,10 @@ export default function Layout() {
         className="bg-white text-gray-900"
       >
         <Toolbar className="flex justify-between">
-          <Typography variant="h6" className="font-bold tracking-wide">
+          <Typography
+            variant="h6"
+            className="font-bold tracking-wide text-gray-900"
+          >
             My News App
           </Typography>
 
@@ -30,8 +38,8 @@ export default function Layout() {
                 key={item.path}
                 component={Link}
                 to={item.path}
-                variant={location.pathname === item.path ? "contained" : "text"}
-                color="primary"
+                variant={isActive(item.path) ? "contained" : "outlined"}
+                color={isActive(item.path) ? "primary" : "inherit"}
                 className="capitalize"
               >
                 {item.label}
@@ -41,7 +49,7 @@ export default function Layout() {
         </Toolbar>
       </AppBar>
 
-      {/* Contenu principal */}
+      {/* Main content */}
       <Container maxWidth="lg" className="flex-1 py-8">
         <Outlet />
       </Container>
