@@ -1,45 +1,45 @@
-import { TextField, MenuItem, Button } from "@mui/material";
+import { Box, TextField, Button, MenuItem } from "@mui/material";
 
-export default function NewsFilter({ filters, onFilterChange }) {
-  const handleChange = (e) => {
-    onFilterChange({ ...filters, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onFilterChange(filters);
-  };
+export default function NewsFilter({ filters, onChange, onSubmit }) {
+  const categories = [
+    { value: "technology", label: "Technologie" },
+    { value: "business", label: "Business" },
+    { value: "sports", label: "Sports" },
+    { value: "health", label: "Santé" },
+  ];
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mb-6 flex gap-4 flex-wrap items-end"
+    <Box
+      component="form"
+      onSubmit={onSubmit}
+      className="mb-6 flex flex-wrap gap-4 items-end"
     >
       <TextField
         select
         label="Catégorie"
         name="category"
         value={filters.category}
-        onChange={handleChange}
+        onChange={onChange}
         size="small"
       >
-        <MenuItem value="technology">Technologie</MenuItem>
-        <MenuItem value="business">Business</MenuItem>
-        <MenuItem value="sports">Sports</MenuItem>
-        <MenuItem value="health">Santé</MenuItem>
+        {categories.map((cat) => (
+          <MenuItem key={cat.value} value={cat.value}>
+            {cat.label}
+          </MenuItem>
+        ))}
       </TextField>
 
       <TextField
-        label="Mot-clé"
+        label="Rechercher un mot-clé..."
         name="q"
         value={filters.q}
-        onChange={handleChange}
+        onChange={onChange}
         size="small"
       />
 
-      <Button variant="contained" color="primary" type="submit">
+      <Button variant="contained" type="submit" color="primary">
         Filtrer
       </Button>
-    </form>
+    </Box>
   );
 }

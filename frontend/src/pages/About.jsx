@@ -1,30 +1,59 @@
-// frontend/src/pages/About.jsx
-import { Typography, Card, CardContent } from "@mui/material";
+import { Box, Typography, Card, CardContent, Link } from "@mui/material";
 
 export default function About() {
   return (
-    <div className="space-y-6 max-w-3xl mx-auto">
-      <Typography variant="h4" className="font-bold text-blue-600">
+    <Box className="p-4">
+      <Typography
+        variant="h3"
+        component="h1"
+        className="font-bold mb-6 text-center"
+      >
         À propos
       </Typography>
 
-      <Card className="shadow-md rounded-2xl">
-        <CardContent className="space-y-4">
-          <Typography variant="body1" className="text-gray-700">
-            <strong>My News App</strong> est un projet moderne qui combine
-            React, NestJS et l'intelligence artificielle pour rendre l'accès à
-            l'information plus simple et efficace.
-          </Typography>
-          <Typography variant="body1" className="text-gray-700">
-            Les fonctionnalités incluent :
-          </Typography>
-          <ul className="list-disc pl-6 text-left text-gray-600 space-y-1">
-            <li>Recherche et filtrage des articles</li>
-            <li>Résumé automatique des contenus par IA</li>
-            <li>Affichage fluide et responsive</li>
-          </ul>
-        </CardContent>
-      </Card>
-    </div>
+      <Box className="space-y-4">
+        <Card>
+          <CardContent>
+            <Typography variant="h5" component="h2" gutterBottom>
+              Objectif de l’application
+            </Typography>
+            <Typography variant="body1" color="textSecondary">
+              My News App a été créée pour centraliser l'information et
+              permettre aux utilisateurs de suivre les actualités rapidement
+              grâce à des résumés générés par l'IA.
+            </Typography>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <Typography variant="h5" component="h2" gutterBottom>
+              Technologies utilisées
+            </Typography>
+            <ul className="list-disc list-inside text-gray-700">
+              <li>Frontend : React, Material UI, Tailwind CSS</li>
+              <li>Backend : NestJS</li>
+              <li>Flux RSS pour les articles</li>
+              <li>Résumé IA via HuggingFace API</li>
+            </ul>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <Typography variant="h5" component="h2" gutterBottom>
+              Contact
+            </Typography>
+            <Typography variant="body1" color="textSecondary">
+              Pour toute question ou suggestion, contactez-nous sur{" "}
+              <Link href="mailto:support@mynewsapp.com">
+                support@mynewsapp.com
+              </Link>
+              .
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
+    </Box>
   );
 }

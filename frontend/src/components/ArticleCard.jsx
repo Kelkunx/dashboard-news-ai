@@ -1,4 +1,4 @@
-import { Card, CardContent, Typography, Link } from "@mui/material";
+import { Card, CardContent, Typography, Link, Box } from "@mui/material";
 
 export default function ArticleCard({ article, summary }) {
   const truncate = (text, maxLength = 200) => {
@@ -7,27 +7,48 @@ export default function ArticleCard({ article, summary }) {
   };
 
   return (
-    <Card className="border rounded">
+    <Card className="border rounded shadow-sm hover:shadow-md transition-shadow duration-300">
       <CardContent>
-        <Typography variant="h6" component="h2" gutterBottom>
-          {article.title}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
+        {/* Titre cliquable */}
+        <Link
+          href={article.link}
+          target="_blank"
+          rel="noopener"
+          underline="hover"
+        >
+          <Typography
+            variant="h6"
+            component="h2"
+            gutterBottom
+            className="font-bold hover:underline"
+          >
+            {article.title}
+          </Typography>
+        </Link>
+
+        {/* Description */}
+        <Typography variant="body2" color="textSecondary" className="mb-2">
           {truncate(article.description)}
         </Typography>
-        <Typography
-          variant="caption"
-          color="textSecondary"
-          className="mt-2 block"
-        >
-          <strong>Résumé IA :</strong> {summary || "Chargement..."}
-        </Typography>
+
+        {/* Résumé IA */}
+        <Box className="p-2 rounded bg-gray-50 border-l-4 border-blue-400 mb-2">
+          <Typography
+            variant="body2"
+            color="textPrimary"
+            className="font-medium"
+          >
+            <strong>Résumé IA :</strong> {summary || "Chargement..."}
+          </Typography>
+        </Box>
+
+        {/* Lien secondaire */}
         {article.link && (
           <Link
             href={article.link}
             target="_blank"
             rel="noopener"
-            className="block mt-2 text-blue-500"
+            className="text-blue-500 font-medium hover:underline"
           >
             Lire l'article
           </Link>

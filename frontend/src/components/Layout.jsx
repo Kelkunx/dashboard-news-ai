@@ -27,7 +27,7 @@ export default function Layout() {
         <Toolbar className="flex justify-between">
           <Typography
             variant="h6"
-            className="font-bold tracking-wide text-gray-900"
+            className="font-bold tracking-wide text-primary"
           >
             My News App
           </Typography>
