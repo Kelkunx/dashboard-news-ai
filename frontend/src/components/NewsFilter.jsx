@@ -1,45 +1,46 @@
-import { Box, TextField, Button, MenuItem } from "@mui/material";
+import { Box, Button, TextField, MenuItem, Stack } from "@mui/material";
 
-export default function NewsFilter({ filters, onChange, onSubmit }) {
-  const categories = [
-    { value: "technology", label: "Technologie" },
-    { value: "business", label: "Business" },
-    { value: "sports", label: "Sports" },
-    { value: "health", label: "Santé" },
-  ];
+export default function NewsFilter({ filters, setFilters, onSubmit }) {
+  const handleChange = (e) => {
+    setFilters({ ...filters, [e.target.name]: e.target.value });
+  };
 
   return (
     <Box
       component="form"
-      onSubmit={onSubmit}
-      className="mb-6 flex flex-wrap gap-4 items-end"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit();
+      }}
+      mb={4}
     >
-      <TextField
-        select
-        label="Catégorie"
-        name="category"
-        value={filters.category}
-        onChange={onChange}
-        size="small"
-      >
-        {categories.map((cat) => (
-          <MenuItem key={cat.value} value={cat.value}>
-            {cat.label}
-          </MenuItem>
-        ))}
-      </TextField>
+      <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+        <TextField
+          select
+          name="category"
+          label="Catégorie"
+          value={filters.category}
+          onChange={handleChange}
+          fullWidth
+        >
+          <MenuItem value="technology">Technologie</MenuItem>
+          <MenuItem value="business">Business</MenuItem>
+          <MenuItem value="sports">Sports</MenuItem>
+          <MenuItem value="health">Santé</MenuItem>
+        </TextField>
 
-      <TextField
-        label="Rechercher un mot-clé..."
-        name="q"
-        value={filters.q}
-        onChange={onChange}
-        size="small"
-      />
+        <TextField
+          name="q"
+          label="Mot-clé"
+          value={filters.q}
+          onChange={handleChange}
+          fullWidth
+        />
 
-      <Button variant="contained" type="submit" color="primary">
-        Filtrer
-      </Button>
+        <Button type="submit" variant="contained" color="primary">
+          Filtrer
+        </Button>
+      </Stack>
     </Box>
   );
 }

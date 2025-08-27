@@ -7,48 +7,37 @@ export default function ArticleCard({ article, summary }) {
   };
 
   return (
-    <Card className="border rounded shadow-sm hover:shadow-md transition-shadow duration-300">
+    <Card variant="outlined" sx={{ mb: 2 }}>
       <CardContent>
-        {/* Titre cliquable */}
-        <Link
+        <Typography
+          variant="h6"
+          component="a"
           href={article.link}
           target="_blank"
           rel="noopener"
-          underline="hover"
+          sx={{
+            textDecoration: "none",
+            color: "primary.main",
+            fontWeight: "bold",
+          }}
+          gutterBottom
         >
-          <Typography
-            variant="h6"
-            component="h2"
-            gutterBottom
-            className="font-bold hover:underline"
-          >
-            {article.title}
-          </Typography>
-        </Link>
-
-        {/* Description */}
-        <Typography variant="body2" color="textSecondary" className="mb-2">
+          {article.title}
+        </Typography>
+        <Typography variant="body2" color="textSecondary" paragraph>
           {truncate(article.description)}
         </Typography>
-
-        {/* Résumé IA */}
-        <Box className="p-2 rounded bg-gray-50 border-l-4 border-blue-400 mb-2">
-          <Typography
-            variant="body2"
-            color="textPrimary"
-            className="font-medium"
-          >
+        <Box sx={{ p: 1, bgcolor: "grey.100", borderRadius: 1 }}>
+          <Typography variant="body2" color="textPrimary">
             <strong>Résumé IA :</strong> {summary || "Chargement..."}
           </Typography>
         </Box>
-
-        {/* Lien secondaire */}
         {article.link && (
           <Link
             href={article.link}
             target="_blank"
             rel="noopener"
-            className="text-blue-500 font-medium hover:underline"
+            sx={{ mt: 1, display: "block" }}
           >
             Lire l'article
           </Link>
