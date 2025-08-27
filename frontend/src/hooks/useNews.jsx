@@ -27,7 +27,8 @@ export default function useNews(
   // fetch automatique au montage
   useEffect(() => {
     fetchNews();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // uniquement au montage
 
   return { articles, loading, error, filters, setFilters, fetchNews };
 }
