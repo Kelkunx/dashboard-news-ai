@@ -4,6 +4,10 @@ import { NewsModule } from './news/news.module';
 import { SummaryModule } from './summary/summary.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), NewsModule, SummaryModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    NewsModule,
+    SummaryModule,
+  ],
 })
 export class AppModule {}
