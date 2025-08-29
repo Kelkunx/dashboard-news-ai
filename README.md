@@ -65,7 +65,7 @@ cd ../frontend
 npm run dev
 ```
 
-5. Ouvrez [http://localhost:3000](http://localhost:3000) dans votre navigateur.
+5. Ouvrez [http://localhost:5173](http://localhost:5173) dans votre navigateur.
 
 ---
 
