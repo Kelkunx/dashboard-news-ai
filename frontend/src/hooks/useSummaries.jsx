@@ -1,6 +1,8 @@
 // frontend/src/hooks/useSummaries.js
 import { useEffect, useRef, useState } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 /**
  * useSummaries : génère des résumés IA pour les articles visibles
  * - articles : array d'articles
@@ -77,7 +79,7 @@ export default function useSummaries(articles, visibleCount) {
       const controller = new AbortController();
       abortMapRef.current.set(key, controller);
 
-      fetch("http://localhost:3000/summary", {
+      fetch(`${API_URL}/summary`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),

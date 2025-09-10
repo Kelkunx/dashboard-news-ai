@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 export default function useNews(
   initialFilters = { category: "technology", q: "" }
 ) {
@@ -13,7 +15,7 @@ export default function useNews(
     setError(null);
     try {
       const params = new URLSearchParams({ ...filters, page: 1, perPage: 50 });
-      const res = await fetch(`http://localhost:3000/news?${params}`);
+      const res = await fetch(`${API_URL}/news?${params}`);
       const data = await res.json();
       setArticles(data);
     } catch (err) {
