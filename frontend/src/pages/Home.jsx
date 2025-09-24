@@ -43,7 +43,7 @@ export default function Home() {
             component={Link}
             variant="contained"
             color="primary"
-            href="/news"
+            to="/news"
           >
             Voir les news
           </Button>
