@@ -39,7 +39,12 @@ export default function Home() {
         </Card>
 
         <Box className="flex justify-center mt-4">
-          <Button variant="contained" color="primary" href="/news">
+          <Button
+            component={Link}
+            variant="contained"
+            color="primary"
+            href="/news"
+          >
             Voir les news
           </Button>
         </Box>
